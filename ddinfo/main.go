@@ -16,9 +16,10 @@ type DangDangInfo struct {
 	Intro     string `json:"intro"`
 	Author    string `json:"author"`
 	Publisher string `json:"publisher"`
-	ISBN      string `json:"isbn"`
-	Desc      string `json:"desc"`
 	Time      string `json:"time"`
+	ISBN      string `json:"isbn"`
+	Recommend string `json:"recommend"`
+	Desc      string `json:"desc"`
 }
 
 func main() {
@@ -28,25 +29,21 @@ func main() {
 	store.DB.AutoMigrate(&DangDangInfo{})
 	log := utils.NewLog("error.log")
 
-	var out bool
-	fmt.Println("info start")
 	for {
-		if out {
+		l := store.RDS.LLen(context.Background(), "ddlink").Val()
+		if l <= 0 {
 			break
 		}
 
-		func() {
-			l := store.RDS.LLen(context.Background(), "ddlink").Val()
-			if l <= 0 {
-				out = true
-				return
-			}
+		value := store.RDS.LPop(context.Background(), "ddlink")
+		if value.Err() != nil {
+			log.Error(errors.Wrap(value.Err(), `读取redis列表失败`))
+			return
+		}
 
-			value := store.RDS.LPop(context.Background(), "ddlink")
-			if value.Err() != nil {
-				log.Error(errors.Wrap(value.Err(), `读取redis列表失败`))
-				return
-			}
+		url := value.Val()
+
+		func(url string) {
 
 			ctx, cancel := chromedp.NewContext(
 				context.Background(),
@@ -57,7 +54,6 @@ func main() {
 			ctx, cancel = context.WithTimeout(ctx, 40*time.Second)
 			defer cancel()
 
-			url := value.Val()
 			if err := chromedp.Run(ctx,
 				utils.Setcookies(".dangdang.com", "sessionID", utils.DDSession, "secret_key", utils.DDSecret),
 				chromedp.Navigate(url)); err != nil {
@@ -99,6 +95,11 @@ func main() {
 				log.Error(errors.Wrap(err, fmt.Sprintf(`获取出版社失败: %s`, url)))
 			}
 
+			//推荐
+			if err := chromedp.Run(ctx, chromedp.Text(`#abstract > div.descrip`, &book.Recommend, chromedp.NodeVisible)); err != nil {
+				log.Error(errors.Wrap(err, fmt.Sprintf(`获取推荐失败: %s`, url)))
+			}
+
 			//详情
 			if err := chromedp.Run(ctx, chromedp.Text(`#content > div.descrip`, &book.Desc, chromedp.NodeVisible)); err != nil {
 				log.Error(errors.Wrap(err, fmt.Sprintf(`获取出版社失败: %s`, url)))
@@ -112,7 +113,7 @@ func main() {
 			}
 
 			time.Sleep(1 * time.Minute)
-		}()
+		}(url)
 	}
 
 	fmt.Println("info end")

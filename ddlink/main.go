@@ -21,7 +21,20 @@ func main() {
 	log := utils.NewLog("error.log")
 
 	fmt.Println("start")
-	for _, name := range names {
+	for {
+		l := store.RDS.LLen(context.Background(), utils.RDSBookNamekey).Val()
+		if l <= 0 {
+			break
+		}
+
+		value := store.RDS.LPop(context.Background(), utils.RDSBookNamekey)
+		if value.Err() != nil {
+			log.Error(errors.Wrap(value.Err(), `读取redis列表失败`))
+			return
+		}
+
+		name := value.Val()
+
 		func(name string) {
 			opts := append(chromedp.DefaultExecAllocatorOptions[:],
 				chromedp.Flag("headless", false),
@@ -67,5 +80,6 @@ func main() {
 			time.Sleep(time.Minute * 2)
 		}(name)
 	}
+
 	fmt.Println("finish")
 }
