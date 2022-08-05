@@ -36,15 +36,15 @@ func main() {
 		name := value.Val()
 
 		func(name string) {
-			opts := append(chromedp.DefaultExecAllocatorOptions[:],
-				chromedp.Flag("headless", false),
-			)
-
-			allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
-			defer cancel()
+			//opts := append(chromedp.DefaultExecAllocatorOptions[:],
+			//	chromedp.Flag("headless", false),
+			//)
+			//
+			//allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
+			//defer cancel()
 
 			ctx, cancel := chromedp.NewContext(
-				allocCtx,
+				context.Background(),
 				chromedp.WithLogf(log.Printf),
 			)
 			defer cancel()
@@ -77,7 +77,7 @@ func main() {
 				}
 			}
 
-			time.Sleep(time.Minute * 2)
+			time.Sleep(time.Minute * 1)
 		}(name)
 	}
 

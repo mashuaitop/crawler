@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"io/ioutil"
+	"strings"
 )
 
 func main() {
@@ -21,8 +22,15 @@ func main() {
 
 	for _, book := range dir {
 		name := book.Name()
-		if err = store.RDS.RPush(context.Background(), utils.RDSBookNamekey).Err(); err != nil {
-			log.Error(errors.Wrap(err, fmt.Sprintf("写入书名失败: %s", name)))
+		if name[0] == '.' {
+			continue
+		}
+
+		split := strings.Split(name, ".")
+		bookName := split[0]
+		fmt.Println(bookName)
+		if err = store.RDS.RPush(context.Background(), utils.RDSBookNamekey, bookName).Err(); err != nil {
+			log.Error(errors.Wrap(err, fmt.Sprintf("写入书名失败: %s", bookName)))
 		}
 	}
 

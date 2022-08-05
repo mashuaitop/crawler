@@ -29,6 +29,7 @@ func main() {
 	store.DB.AutoMigrate(&DangDangInfo{})
 	log := utils.NewLog("error.log")
 
+	fmt.Println("start")
 	for {
 		l := store.RDS.LLen(context.Background(), "ddlink").Val()
 		if l <= 0 {
