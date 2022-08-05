@@ -1,0 +1,45 @@
+# IDEs and editors
+/.idea
+.idea/httpRequests/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# DEV environment file
+gin-bin
+build
+demo
+.dev
+.test
+.log
+
+# app build binary
+app.out
+
+# app run log
+nohup.out
+
+# static files
+web
+
+# temporary files
+/tmp
+*~
+.*~
+.#*
+/test
+
