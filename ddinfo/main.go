@@ -114,6 +114,7 @@ func main() {
 			}
 
 			time.Sleep(1 * time.Minute)
+			log.Error("\n")
 		}(url)
 	}
 
