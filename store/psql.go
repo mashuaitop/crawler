@@ -51,11 +51,11 @@ func InitDB() {
 }
 
 func uri() string {
-	host := "192.168.1.88"
-	port := 7432
-	user := "classcool"
-	password := "123456"
-	db := "template1"
+	host := "82.157.242.33"
+	port := 5432
+	user := "mashuai"
+	password := "baima20170902@@.."
+	db := "book-store"
 	sslmode := "disable"
 
 	return fmt.Sprintf(

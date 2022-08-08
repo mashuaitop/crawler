@@ -10,11 +10,6 @@ import (
 	"time"
 )
 
-var names = []string{
-	"我和妈妈的最后一年",
-	"文明的比较：中国、日本、欧洲，以及英语文化圈",
-}
-
 func main() {
 	store.InitRDS()
 
@@ -77,7 +72,7 @@ func main() {
 				}
 			}
 
-			time.Sleep(time.Minute * 1)
+			time.Sleep(time.Second * 30)
 		}(name)
 	}
 
