@@ -46,14 +46,21 @@ func main() {
 		url := value.Val()
 
 		func(url string) {
+			opts := append(chromedp.DefaultExecAllocatorOptions[:],
+				chromedp.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36 Aoyou/cXRsNCdsM3s-T1c8SHhARZqOZNMwOHWB7sPpE_x2ULIWqtc__h71MI7ASQ==`),
+				//chromedp.Flag("headless", false),
+			)
+
+			allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
+			defer cancel()
 
 			ctx, cancel := chromedp.NewContext(
-				context.Background(),
+				allocCtx,
 				chromedp.WithLogf(log.Printf),
 			)
 			defer cancel()
 
-			ctx, cancel = context.WithTimeout(ctx, 40*time.Second)
+			ctx, cancel = context.WithTimeout(ctx, time.Minute)
 			defer cancel()
 
 			if err := chromedp.Run(ctx,
@@ -63,7 +70,7 @@ func main() {
 				return
 			}
 
-			time.Sleep(20 * time.Second)
+			time.Sleep(40 * time.Second)
 
 			var book DangDangInfo
 			//标题

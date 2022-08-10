@@ -48,7 +48,6 @@ func main() {
 			defer cancel()
 
 			if err := chromedp.Run(ctx,
-				utils.Setcookies(".dangdang.com", "sessionID", utils.DDSession, "secret_key", utils.DDSecret),
 				chromedp.Navigate(fmt.Sprintf("http://search.dangdang.com/?key=%s&act=input", name))); err != nil {
 				log.Error(errors.Wrap(err, fmt.Sprintf(`搜索列表打开失败: %s`, name)))
 				time.Sleep(5 * time.Second)
