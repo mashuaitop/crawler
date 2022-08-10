@@ -31,10 +31,17 @@ func main() {
 		}
 
 		split := strings.Split(name, ".")
-		bookName := split[0]
-		fmt.Println(bookName)
-		if err = store.RDS.RPush(context.Background(), utils.RDSZBookNamekey, bookName).Err(); err != nil {
-			log.Error(errors.Wrap(err, fmt.Sprintf("写入图书馆书名失败: %s", bookName)))
+		if len(split) > 0 {
+			bookName := split[0]
+			idx := strings.LastIndex(bookName, "z-lib")
+			if idx != -1 {
+				bookName = strings.TrimSpace(bookName[:idx])
+			}
+
+			fmt.Println(bookName)
+			if err = store.RDS.RPush(context.Background(), utils.RDSZBookNamekey, bookName).Err(); err != nil {
+				log.Error(errors.Wrap(err, fmt.Sprintf("写入图书馆书名失败: %s", bookName)))
+			}
 		}
 	}
 

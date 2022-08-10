@@ -10,7 +10,9 @@ import (
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -43,7 +45,15 @@ func main() {
 		func(info *model.ImgInfo) {
 			src := info.Src
 			name := info.Name
-			resp, err := http.Get(info.Src)
+
+			proxy, _ := url.Parse("http://127.0.0.1:9999")
+			c := http.Client{
+				Transport: &http.Transport{
+					Proxy: http.ProxyURL(proxy),
+				},
+				Timeout: time.Minute,
+			}
+			resp, err := c.Get(info.Src)
 			if err != nil {
 				log.Error(errors.Wrap(err, fmt.Sprintf(`http get err url: %s`, src)))
 				return
@@ -69,7 +79,6 @@ func main() {
 				return
 			}
 		}(&info)
-		break
 	}
 
 	fmt.Println("finish")
