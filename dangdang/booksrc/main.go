@@ -17,12 +17,12 @@ func main() {
 
 	fmt.Println("start")
 	for {
-		l := store.RDS.LLen(context.Background(), utils.RDSBookNamekey).Val()
+		l := store.RDS.LLen(context.Background(), utils.RDSDBookNamekey).Val()
 		if l <= 0 {
 			break
 		}
 
-		value := store.RDS.LPop(context.Background(), utils.RDSBookNamekey)
+		value := store.RDS.LPop(context.Background(), utils.RDSDBookNamekey)
 		if value.Err() != nil {
 			log.Error(errors.Wrap(value.Err(), `读取redis列表失败`))
 			return

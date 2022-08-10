@@ -25,7 +25,6 @@ build
 demo
 .dev
 .test
-*.log
 
 # app build binary
 app.out
@@ -42,4 +41,5 @@ web
 .*~
 .#*
 /test
+*.log
 

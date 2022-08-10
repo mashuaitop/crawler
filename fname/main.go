@@ -29,8 +29,8 @@ func main() {
 		split := strings.Split(name, ".")
 		bookName := split[0]
 		fmt.Println(bookName)
-		if err = store.RDS.RPush(context.Background(), utils.RDSBookNamekey, bookName).Err(); err != nil {
-			log.Error(errors.Wrap(err, fmt.Sprintf("写入书名失败: %s", bookName)))
+		if err = store.RDS.RPush(context.Background(), utils.RDSDBookNamekey, bookName).Err(); err != nil {
+			log.Error(errors.Wrap(err, fmt.Sprintf("写入当当书名失败: %s", bookName)))
 		}
 	}
 

@@ -11,15 +11,16 @@ import (
 )
 
 type DangDangInfo struct {
-	ID        int64  `json:"id" gorm:"primaryKey;autoIncrement"`
-	Title     string `json:"title"`
-	Intro     string `json:"intro"`
-	Author    string `json:"author"`
-	Publisher string `json:"publisher"`
-	Time      string `json:"time"`
-	ISBN      string `json:"isbn"`
-	Recommend string `json:"recommend"`
-	Desc      string `json:"desc"`
+	ID        int64      `json:"id" gorm:"primaryKey;autoIncrement"`
+	Title     string     `json:"title"`
+	Intro     string     `json:"intro"`
+	Author    string     `json:"author"`
+	Publisher string     `json:"publisher"`
+	Time      string     `json:"time"`
+	ISBN      string     `json:"isbn"`
+	Recommend string     `json:"recommend"`
+	Desc      string     `json:"desc"`
+	CreatedAt *time.Time `json:"createdAt"`
 }
 
 func main() {
@@ -114,7 +115,7 @@ func main() {
 			}
 
 			time.Sleep(1 * time.Minute)
-			log.Error("\n")
+			log.Info("\n")
 		}(url)
 	}
 
