@@ -47,6 +47,7 @@ func main() {
 
 		func(url string) {
 			opts := append(chromedp.DefaultExecAllocatorOptions[:],
+				chromedp.ExecPath(`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`),
 				chromedp.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36 Aoyou/cXRsNCdsM3s-T1c8SHhARZqOZNMwOHWB7sPpE_x2ULIWqtc__h71MI7ASQ==`),
 				//chromedp.Flag("headless", false),
 			)
@@ -70,7 +71,7 @@ func main() {
 				return
 			}
 
-			time.Sleep(40 * time.Second)
+			time.Sleep(20 * time.Second)
 
 			var book DangDangInfo
 			//标题
@@ -79,12 +80,12 @@ func main() {
 				log.Error(errors.Wrap(err, fmt.Sprintf(`获取title失败: %s`, url)))
 			}
 
-			//介绍
+			//作者
 			if err := chromedp.Run(ctx, chromedp.Text(`#author`, &book.Author, chromedp.NodeVisible)); err != nil {
-				log.Error(errors.Wrap(err, fmt.Sprintf(`获取介绍失败: %s`, url)))
+				log.Error(errors.Wrap(err, fmt.Sprintf(`获取作者失败: %s`, url)))
 			}
 
-			//作者
+			//介绍
 			if err := chromedp.Run(ctx, chromedp.Text(`#product_info > div.name_info > h2 > span.head_title_name`, &book.Intro, chromedp.NodeVisible)); err != nil {
 				log.Error(errors.Wrap(err, fmt.Sprintf(`获取介绍失败: %s`, url)))
 			}
@@ -96,12 +97,12 @@ func main() {
 
 			//时间
 			if err := chromedp.Run(ctx, chromedp.Text(`#product_info > div.messbox_info > span:nth-child(3)`, &book.Time, chromedp.NodeVisible)); err != nil {
-				log.Error(errors.Wrap(err, fmt.Sprintf(`获取出版社失败: %s`, url)))
+				log.Error(errors.Wrap(err, fmt.Sprintf(`获取发布时间失败: %s`, url)))
 			}
 
 			//ISBN
 			if err := chromedp.Run(ctx, chromedp.Text(`#detail_describe > ul > li:nth-child(5)`, &book.ISBN, chromedp.NodeVisible)); err != nil {
-				log.Error(errors.Wrap(err, fmt.Sprintf(`获取出版社失败: %s`, url)))
+				log.Error(errors.Wrap(err, fmt.Sprintf(`获取ISBN失败: %s`, url)))
 			}
 
 			//推荐
@@ -111,18 +112,19 @@ func main() {
 
 			//详情
 			if err := chromedp.Run(ctx, chromedp.Text(`#content > div.descrip`, &book.Desc, chromedp.NodeVisible)); err != nil {
-				log.Error(errors.Wrap(err, fmt.Sprintf(`获取出版社失败: %s`, url)))
+				log.Error(errors.Wrap(err, fmt.Sprintf(`获取详情失败: %s`, url)))
 			}
 
-			time.Sleep(3 * time.Second)
+			time.Sleep(10 * time.Second)
 			cancel()
 
 			if err := store.DB.Create(&book).Error; err != nil {
 				log.Error(errors.Wrap(err, "创建记录失败"))
 			}
 
-			time.Sleep(1 * time.Minute)
+			time.Sleep(90 * time.Second)
 			log.Info("\n")
+
 		}(url)
 	}
 
