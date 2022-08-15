@@ -2,10 +2,9 @@ package main
 
 import (
 	"context"
-	"crawler/library/model"
+	"crawler/library/methods"
 	"crawler/store"
 	"crawler/utils"
-	"encoding/json"
 	"fmt"
 	"github.com/chromedp/chromedp"
 	"github.com/pkg/errors"
@@ -14,10 +13,11 @@ import (
 	"time"
 )
 
-func main() {
+func main()  {
 	store.InitRDS()
 
 	log := utils.NewLog("error.log")
+	imgPath := "/Users/mashuai/Downloads/bookimg/"
 
 	dir, err := ioutil.ReadDir("/Users/mashuai/Downloads/book")
 	if err != nil {
@@ -46,6 +46,7 @@ func main() {
 	}
 
 	fmt.Println("start")
+
 	for {
 		l := store.RDS.LLen(context.Background(), utils.RDSZBookNamekey).Val()
 		if l <= 0 {
@@ -74,17 +75,16 @@ func main() {
 			)
 			defer cancel()
 
-			ctx, cancel = context.WithTimeout(ctx, 2*time.Minute)
+			ctx, cancel = context.WithTimeout(ctx, 1*time.Minute)
 			defer cancel()
 
 			if err := chromedp.Run(ctx,
 				chromedp.Navigate(fmt.Sprintf("https://zh.u1lib.org/s/%s?extensions[]=epub", name))); err != nil {
 				log.Error(errors.Wrap(err, fmt.Sprintf(`搜索列表打开失败: %s`, name)))
-				time.Sleep(5 * time.Second)
 				return
 			}
 
-			time.Sleep(time.Minute)
+			time.Sleep(time.Second * 30)
 
 			var src string
 			if err := chromedp.Run(ctx, chromedp.AttributeValue(`#searchResultBox > div:nth-child(2) > div > table > tbody > tr > td.itemCover > div > div > a > img`, "src", &src, nil)); err != nil {
@@ -94,26 +94,15 @@ func main() {
 
 			cancel()
 
-			src = strings.Replace(src, "100", "", 1)
-			fmt.Printf("%s: %s \n", name, src)
 			if src != "" {
-				var info model.ImgInfo
-				info.Name = name
-				info.Src = src
-
-				data, err := json.Marshal(&info)
-				if err != nil {
+				src = strings.Replace(src, "100", "", 1)
+				if err = methods.DownloadImg(name, src, imgPath); err != nil {
 					log.Error(err)
-					return
-				}
-
-				if err = store.RDS.RPush(context.Background(), utils.RDSBookSrckey, string(data)).Err(); err != nil {
-					log.Error(errors.Wrap(err, fmt.Sprintf("写入图书馆书籍图片失败: %s", name)))
 				}
 			}
-
+			time.Sleep(time.Second * 3)
 		}(name)
 	}
 
-	fmt.Println("finish")
+	fmt.Println("end")
 }

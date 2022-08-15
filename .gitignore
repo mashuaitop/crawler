@@ -42,4 +42,5 @@ web
 .#*
 /test
 *.log
+*.txt
 

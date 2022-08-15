@@ -1,7 +1,7 @@
 package utils
 
-const DDSession = "pc_74560f075ba28c8b19464a518254cc5ca780806a8ecce9d4ffe977a8f80d8a1f"
-const DDSecret = "dffcf5e41fae6fd8dae108adbcf1103d"
+const DDSession = "pc_ae858abfd75d1b63c51a4e0b3dd40d67390854d464293f37ae5e685edb498c06"
+const DDSecret = "dfa436db2fdc8d50c1c898cccedcbb81"
 
 const RDSDBookNamekey = "dbookname"
 const RDSZBookNamekey = "zbookname"

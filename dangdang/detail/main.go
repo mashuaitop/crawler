@@ -27,7 +27,6 @@ func main() {
 	store.InitDB()
 	store.InitRDS()
 
-	store.DB.AutoMigrate(&DangDangInfo{})
 	log := utils.NewLog("error.log")
 
 	fmt.Println("start")
