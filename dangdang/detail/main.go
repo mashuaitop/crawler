@@ -46,7 +46,7 @@ func main() {
 
 		func(url string) {
 			opts := append(chromedp.DefaultExecAllocatorOptions[:],
-				chromedp.ExecPath(`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`),
+				//chromedp.ExecPath(`/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`),
 				chromedp.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36 Aoyou/cXRsNCdsM3s-T1c8SHhARZqOZNMwOHWB7sPpE_x2ULIWqtc__h71MI7ASQ==`),
 				//chromedp.Flag("headless", false),
 			)
@@ -60,17 +60,24 @@ func main() {
 			)
 			defer cancel()
 
-			ctx, cancel = context.WithTimeout(ctx, time.Minute)
+			ctx, cancel = context.WithTimeout(ctx, time.Second*90)
 			defer cancel()
 
 			if err := chromedp.Run(ctx,
-				utils.Setcookies(".dangdang.com", "sessionID", utils.DDSession, "secret_key", utils.DDSecret),
+				utils.Setcookies(".dangdang.com",
+					"sessionID", utils.DDSession,
+					"secret_key", utils.DDSecret,
+					"dangdang.com", "email=MTg2MzEyNDgzOTY5NTA2N0BkZG1vYmlscGhvbmVfX3VzZXIuY29t&nickname=&display_id=2722130315921&customerid=DXCTE2oZkyDFKbIDmWL9Pg==&viptype=ahgMzzL30qE=&show_name=186****8396",
+					"login.dangdang.com", ".ASPXAUTH=EceT/yEd6rIv4MakDmU6VzjotEVNESjA15Efkug8tUmGGIuajKhohQ==",
+					"unique_id", "1e6ae66fa598652c009c873c4c2a8efe",
+					"LOGIN_TIME", "1660805526331",
+					"ddoy", "email=1863124839695067@ddmobilphone__user.com&nickname=&validatedflag=0&uname=18631248396&utype=0&.ALFG=off&.ALTM=1660805616344"),
 				chromedp.Navigate(url)); err != nil {
 				log.Error(errors.Wrap(err, fmt.Sprintf(`打开url失败: %s`, url)))
 				return
 			}
 
-			time.Sleep(20 * time.Second)
+			time.Sleep(30 * time.Second)
 
 			var book DangDangInfo
 			//标题
@@ -121,7 +128,7 @@ func main() {
 				log.Error(errors.Wrap(err, "创建记录失败"))
 			}
 
-			time.Sleep(90 * time.Second)
+			time.Sleep(time.Minute)
 			log.Info("\n")
 
 		}(url)

@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-func main()  {
-	userID := "24925052"
-	userKey := "c83062c631292c865470392bff5f5dc2"
+func main() {
+	userID := "14888602"
+	userKey := "66664bfc5095989c94b7df566f44c296"
 	imgPath := "/Users/mashuai/Downloads/bookimg/"
 	bookPath := "/Users/mashuai/Downloads/book/"
 
@@ -25,9 +25,7 @@ func main()  {
 		return
 	}
 
-
-
-	for _, bookName := range names  {
+	for _, bookName := range names {
 		func() {
 			url, err := methods.SearchDetailHref(bookName)
 			if err != nil {
@@ -38,7 +36,7 @@ func main()  {
 
 			opts := append(chromedp.DefaultExecAllocatorOptions[:],
 				chromedp.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36 Aoyou/cXRsNCdsM3s-T1c8SHhARZqOZNMwOHWB7sPpE_x2ULIWqtc__h71MI7ASQ==`),
-				chromedp.Flag("headless", false),
+				//chromedp.Flag("headless", false),
 			)
 
 			allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
@@ -50,7 +48,7 @@ func main()  {
 			)
 			defer cancel()
 
-			ctx, cancel = context.WithTimeout(ctx, 1*time.Minute)
+			ctx, cancel = context.WithTimeout(ctx, 10*time.Minute)
 			defer cancel()
 
 			if err := chromedp.Run(ctx,
@@ -106,9 +104,9 @@ func main()  {
 			<-fileDone
 			time.Sleep(time.Second * 20)
 			log.Info(fmt.Sprintf("%s 完成下载", bookName))
+			return
 		}()
 	}
 
 	fmt.Println("end")
 }
-
