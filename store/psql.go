@@ -51,10 +51,10 @@ func InitDB() {
 }
 
 func uri() string {
-	host := "82.157.242.33"
+	host := ""
 	port := 5432
 	user := "mashuai"
-	password := "baima20170902@@.."
+	password := ""
 	db := "book-store"
 	sslmode := "disable"
 
