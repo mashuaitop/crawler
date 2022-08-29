@@ -69,9 +69,7 @@ func main() {
 					"secret_key", utils.DDSecret,
 					"dangdang.com", "email=MTg2MzEyNDgzOTY5NTA2N0BkZG1vYmlscGhvbmVfX3VzZXIuY29t&nickname=&display_id=2722130315921&customerid=DXCTE2oZkyDFKbIDmWL9Pg==&viptype=ahgMzzL30qE=&show_name=186****8396",
 					"login.dangdang.com", ".ASPXAUTH=EceT/yEd6rIv4MakDmU6VzjotEVNESjA15Efkug8tUmGGIuajKhohQ==",
-					"unique_id", "1e6ae66fa598652c009c873c4c2a8efe",
-					"LOGIN_TIME", "1660805526331",
-					"ddoy", "email=1863124839695067@ddmobilphone__user.com&nickname=&validatedflag=0&uname=18631248396&utype=0&.ALFG=off&.ALTM=1660805616344"),
+					"ddoy", "email=1863124839695067@ddmobilphone__user.com&nickname=&validatedflag=0&uname=18631248396&utype=0&.ALFG=off&.ALTM=1660874070790"),
 				chromedp.Navigate(url)); err != nil {
 				log.Error(errors.Wrap(err, fmt.Sprintf(`打开url失败: %s`, url)))
 				return
