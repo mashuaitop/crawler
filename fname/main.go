@@ -1,17 +1,16 @@
 package main
 
 import (
-	"context"
-	"crawler/store"
 	"crawler/utils"
 	"fmt"
-	"github.com/pkg/errors"
+	"io"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
 func main() {
-	store.InitRDS()
+	//store.InitRDS()
 
 	log := utils.NewLog("error.log")
 
@@ -19,6 +18,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	file, err := os.OpenFile("./name.txt", os.O_WRONLY|os.O_APPEND, os.ModeAppend)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
 
 	for _, book := range dir {
 		name := book.Name()
@@ -29,9 +34,14 @@ func main() {
 		split := strings.Split(name, ".")
 		bookName := split[0]
 		fmt.Println(bookName)
-		if err = store.RDS.RPush(context.Background(), utils.RDSDBookNamekey, bookName).Err(); err != nil {
-			log.Error(errors.Wrap(err, fmt.Sprintf("写入当当书名失败: %s", bookName)))
+		//if err = store.RDS.RPush(context.Background(), utils.RDSDBookNamekey, bookName).Err(); err != nil {
+		//	log.Error(errors.Wrap(err, fmt.Sprintf("写入当当书名失败: %s", bookName)))
+		//}
+		_, err := io.WriteString(file, bookName+"\n")
+		if err != nil {
+			log.Error(err)
 		}
+
 	}
 
 	fmt.Println("finish ")
