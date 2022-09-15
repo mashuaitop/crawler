@@ -14,19 +14,19 @@ import (
 )
 
 func main() {
-	//userID := "24968293"
-	//userKey := "b09825b8a4a84888b43cc0d6b4820306"
-	//bookPath := "/Users/mashuai/Downloads/book/"
-	searchBook()
+	store.InitDB()
+	store.InitRDS()
+	//searchBook()
+	downloadBook()
 }
 
 func searchBook() {
-	store.InitDB()
-	store.InitRDS()
 	names := methods.WxBookName(store.DB)
 
 	searchChannel := make(chan struct{}, 10)
 	writeCh := make(chan string, 20)
+	var wg sync.WaitGroup
+
 	go func() {
 		for url := range writeCh {
 			fmt.Printf("url: %s \n", url)
@@ -36,7 +36,6 @@ func searchBook() {
 		}
 	}()
 
-	var wg sync.WaitGroup
 	for _, name := range names {
 		searchChannel <- struct{}{}
 		wg.Add(1)
@@ -58,6 +57,40 @@ func searchBook() {
 	wg.Wait()
 
 	fmt.Println("ok")
+}
+
+func downloadBook() {
+	userID := "24968293"
+	userKey := "b09825b8a4a84888b43cc0d6b4820306"
+	bookPath := "/Users/mashuai/Downloads/book/"
+	log := utils.NewLog("error.log")
+
+	//url := "https://zh.u1lib.org/book/13956997/40e05c"
+	dlCh := make(chan struct{}, 5)
+	var wg sync.WaitGroup
+
+	for i := 0; i < 100; i++ {
+		dlCh <- struct{}{}
+		wg.Add(1)
+
+		url := store.RDS.LPop(context.Background(), "library-search").Val()
+		if url == "" {
+			continue
+		}
+
+		go func(url string) {
+			if err := methods.DownloadBook(userID, userKey, url, bookPath); err != nil {
+				log.Error(err)
+			}
+
+			wg.Done()
+			<-dlCh
+		}(url)
+	}
+
+	wg.Wait()
+
+	fmt.Println("任务完成")
 }
 
 func old() {
