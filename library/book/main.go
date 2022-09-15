@@ -16,8 +16,8 @@ import (
 func main() {
 	store.InitDB()
 	store.InitRDS()
-	//searchBook()
-	downloadBook()
+	searchBook()
+	//downloadBook()
 }
 
 func searchBook() {
@@ -70,6 +70,7 @@ func downloadBook() {
 	var wg sync.WaitGroup
 
 	for i := 0; i < 100; i++ {
+		fmt.Println(i)
 		dlCh <- struct{}{}
 		wg.Add(1)
 
@@ -79,11 +80,11 @@ func downloadBook() {
 		}
 
 		go func(url string) {
+			defer wg.Done()
 			if err := methods.DownloadBook(userID, userKey, url, bookPath); err != nil {
 				log.Error(err)
 			}
 
-			wg.Done()
 			<-dlCh
 		}(url)
 	}
