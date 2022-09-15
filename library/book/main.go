@@ -47,11 +47,15 @@ func searchBook() {
 				fmt.Println(err)
 			}
 
-			writeCh <- url
+			if url != "" {
+				writeCh <- url
+			}
 			wg.Done()
 			<-searchChannel
 		}(name)
 	}
+
+	wg.Wait()
 
 	fmt.Println("ok")
 }

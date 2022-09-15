@@ -25,7 +25,7 @@ func SearchDetailHref(name string) (string, error) {
 	)
 	defer cancel()
 
-	ctx, cancel = context.WithTimeout(ctx, time.Minute)
+	ctx, cancel = context.WithTimeout(ctx, time.Second*90)
 	defer cancel()
 
 	if err := chromedp.Run(ctx,
