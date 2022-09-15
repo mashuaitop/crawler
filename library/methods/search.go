@@ -10,9 +10,10 @@ import (
 	"time"
 )
 
-func SearchDetailHref(name string) (string, error)  {
+func SearchDetailHref(name string) (string, error) {
 	opts := append(chromedp.DefaultExecAllocatorOptions[:],
 		chromedp.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36 Aoyou/cXRsNCdsM3s-T1c8SHhARZqOZNMwOHWB7sPpE_x2ULIWqtc__h71MI7ASQ==`),
+		//chromedp.Flag("headless", false),
 	)
 
 	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
@@ -29,7 +30,7 @@ func SearchDetailHref(name string) (string, error)  {
 
 	if err := chromedp.Run(ctx,
 		chromedp.Navigate(fmt.Sprintf("https://zh.u1lib.org/s/%s?extensions[]=epub", name))); err != nil {
-		return "",errors.Wrap(err, fmt.Sprintf(`搜索列表打开失败: %s`, name))
+		return "", errors.Wrap(err, fmt.Sprintf(`搜索列表打开失败: %s`, name))
 	}
 
 	time.Sleep(time.Second * 20)
@@ -47,7 +48,7 @@ func SearchDetailHref(name string) (string, error)  {
 	return url, nil
 }
 
-func SearchDetailImg(ctx context.Context) (string, error)  {
+func SearchDetailImg(ctx context.Context) (string, error) {
 	var src string
 	if err := chromedp.Run(ctx, chromedp.AttributeValue(`body > table > tbody > tr:nth-child(2) > td > div > div > div > div:nth-child(3) > div.row.cardBooks > div.col-sm-3.details-book-cover-container > div > a > div > img`, "src", &src, nil)); err != nil {
 		return "", errors.Wrap(err, "获取书籍封面失败")

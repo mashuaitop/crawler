@@ -3,15 +3,60 @@ package main
 import (
 	"context"
 	"crawler/library/methods"
+	"crawler/store"
 	"crawler/utils"
 	"fmt"
 	"github.com/chromedp/cdproto/browser"
 	"github.com/chromedp/chromedp"
 	"github.com/pkg/errors"
+	"sync"
 	"time"
 )
 
 func main() {
+	//userID := "24968293"
+	//userKey := "b09825b8a4a84888b43cc0d6b4820306"
+	//bookPath := "/Users/mashuai/Downloads/book/"
+	searchBook()
+}
+
+func searchBook() {
+	store.InitDB()
+	store.InitRDS()
+	names := methods.WxBookName(store.DB)
+
+	searchChannel := make(chan struct{}, 10)
+	writeCh := make(chan string, 20)
+	go func() {
+		for url := range writeCh {
+			fmt.Printf("url: %s \n", url)
+			if err := store.RDS.RPush(context.Background(), "library-search", url).Err(); err != nil {
+				fmt.Println(err)
+			}
+		}
+	}()
+
+	var wg sync.WaitGroup
+	for _, name := range names {
+		searchChannel <- struct{}{}
+		wg.Add(1)
+		go func(name string) {
+			fmt.Printf("bookName: %s \n", name)
+			url, err := methods.SearchDetailHref(name)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			writeCh <- url
+			wg.Done()
+			<-searchChannel
+		}(name)
+	}
+
+	fmt.Println("ok")
+}
+
+func old() {
 	userID := "24783016"
 	userKey := "224bfbc05c76f8d995b3f4ffa46ce4e3"
 	imgPath := "/Users/mashuai/Downloads/bookimg/"

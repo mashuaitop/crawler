@@ -25,7 +25,7 @@ func DownloadImg(name, src, path string) error {
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf(`read body err name: %s; url: %s`,name, src))
+		return errors.Wrap(err, fmt.Sprintf(`read body err name: %s; url: %s`, name, src))
 
 	}
 
@@ -44,4 +44,8 @@ func DownloadImg(name, src, path string) error {
 	}
 
 	return nil
+}
+
+func DownloadBook(path string, url string) {
+
 }
