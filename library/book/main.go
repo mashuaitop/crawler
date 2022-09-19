@@ -16,8 +16,8 @@ import (
 func main() {
 	store.InitDB()
 	store.InitRDS()
-	searchBook()
-	//downloadBook()
+	//searchBook()
+	downloadBook()
 }
 
 func searchBook() {
@@ -66,10 +66,10 @@ func downloadBook() {
 	log := utils.NewLog("error.log")
 
 	//url := "https://zh.u1lib.org/book/13956997/40e05c"
-	dlCh := make(chan struct{}, 5)
+	dlCh := make(chan struct{}, 10)
 	var wg sync.WaitGroup
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 500; i++ {
 		fmt.Println(i)
 		dlCh <- struct{}{}
 		wg.Add(1)
