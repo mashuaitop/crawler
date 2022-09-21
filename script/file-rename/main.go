@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	dirPath := "/Users/mashuai/Downloads/book/"
+	dirPath := "/Users/mashuai/Downloads/bookcha/"
 
 	dir, err := ioutil.ReadDir(dirPath)
 	if err != nil {
@@ -22,7 +22,7 @@ func main() {
 		if name[0] == '.' {
 			continue
 		}
-		split := strings.Split(name, "（")
+		split := strings.Split(name, "【")
 		if len(split) > 1 {
 			newPath := dirPath + strings.TrimSpace(split[0]) + ".epub"
 			if err = os.Rename(dirPath+name, newPath); err != nil {

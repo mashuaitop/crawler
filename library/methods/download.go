@@ -89,7 +89,7 @@ func DownloadBook(uid, key, url, dir string) error {
 				fileDone <- "完成下载"
 				close(fileDone)
 			} else if ev.State == browser.DownloadProgressStateCanceled {
-				fileDone <- "下载失败"
+				fileDone <- fmt.Sprintf("下载失败: %s", url)
 				close(fileDone)
 			}
 		}

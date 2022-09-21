@@ -2,13 +2,13 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"crawler/store"
-	"crawler/utils"
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
 	"io"
 	"os"
+	"strings"
 )
 
 type WxReadInfo struct {
@@ -26,12 +26,51 @@ type WxReadInfo struct {
 }
 
 func main() {
-	store.InitDB()
-	log := utils.NewLog("error.log")
+	readLog()
+	//store.InitDB()
+	//log := utils.NewLog("error.log")
+	//
+	//f, err := os.Open("book.txt")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//defer f.Close()
+	//
+	//r := bufio.NewReader(f)
+	//
+	//for {
+	//	s, err := r.ReadString('\n')
+	//	if err != nil {
+	//		if err == io.EOF {
+	//			break
+	//		} else {
+	//			log.Error(err)
+	//		}
+	//		continue
+	//	}
+	//
+	//	var data WxReadInfo
+	//	if err := json.Unmarshal([]byte(s), &data); err != nil {
+	//		log.Error(errors.Wrap(err, "解析失败"))
+	//	}
+	//	if err := store.DB.Create(&data).Error; err != nil {
+	//		log.Error(errors.Wrap(err, fmt.Sprintf("创建记录失败 idx: %d", data.SearchIndex)))
+	//	}
+	//}
 
-	f, err := os.Open("book.txt")
+}
+
+type logData struct {
+	Msg string `json:"msg"`
+}
+
+func readLog() {
+	store.InitRDS()
+
+	f, err := os.Open("error.log")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	defer f.Close()
@@ -44,18 +83,21 @@ func main() {
 			if err == io.EOF {
 				break
 			} else {
-				log.Error(err)
+				fmt.Println(err)
 			}
 			continue
 		}
 
-		var data WxReadInfo
-		if err := json.Unmarshal([]byte(s), &data); err != nil {
-			log.Error(errors.Wrap(err, "解析失败"))
+		var v logData
+		if err := json.Unmarshal([]byte(s), &v); err != nil {
+			fmt.Println(err)
 		}
-		if err := store.DB.Create(&data).Error; err != nil {
-			log.Error(errors.Wrap(err, fmt.Sprintf("创建记录失败 idx: %d", data.SearchIndex)))
+
+		split := strings.Split(v.Msg, ":")
+		url := "https:" + split[3]
+
+		if err := store.RDS.RPush(context.Background(), "library-search", url).Err(); err != nil {
+			fmt.Println(err)
 		}
 	}
-
 }
