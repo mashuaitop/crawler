@@ -75,7 +75,27 @@ func DownloadBook(uid, key, url, dir string) error {
 		return errors.Wrap(err, fmt.Sprintf("打开书籍详情页失败: url: %s", url))
 	}
 
-	time.Sleep(time.Second * 20)
+	time.Sleep(time.Second * 35)
+
+	var exist string
+	go func() {
+		var src string
+		if err := chromedp.Run(ctx, chromedp.Text(`body > table > tbody > tr:nth-child(2) > td > div > div > div > div:nth-child(3) > div.row.cardBooks > div.col-sm-3.details-book-cover-container > div > a > span`,
+			&src, chromedp.NodeVisible)); err != nil {
+			log.Println(err)
+			return
+		}
+
+		time.Sleep(3 * time.Second)
+		exist = src
+	}()
+
+	time.Sleep(time.Second * 5)
+	if exist == "已下载" {
+		cancel()
+		return errors.New(fmt.Sprintf("书籍已存在: url: %s", url))
+	}
+
 	fileDone := make(chan string, 1)
 
 	chromedp.ListenTarget(ctx, func(v interface{}) {
