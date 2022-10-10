@@ -20,11 +20,11 @@ type WxReadInfo struct {
 
 func WxBookName(db *gorm.DB) []string {
 	var data []WxReadInfo
-	db.Table(`wx_read_info`).Select(`title`).Where(`id > 7200 and book_exist = false`).Order(`id`).Limit(400).Scan(&data)
+	db.Table(`wx_read_info`).Select(`title, author`).Where(`id > 13500 and book_exist = false`).Order(`id`).Limit(500).Scan(&data)
 
 	var names []string
 	for _, row := range data {
-		names = append(names, row.Title)
+		names = append(names, row.Title+" "+row.Author)
 	}
 
 	return names

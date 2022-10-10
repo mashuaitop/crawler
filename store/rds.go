@@ -9,7 +9,7 @@ import (
 var RDS *redis.Client
 
 func InitRDS() {
-	host := "127.0.0.1"
+	host := ""
 	port := 6379
 	pwd := ""
 	db := 0
@@ -26,4 +26,8 @@ func InitRDS() {
 	}
 
 	RDS = rdb
+}
+
+func RPUSH() {
+
 }

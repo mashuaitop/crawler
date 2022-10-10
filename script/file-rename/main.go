@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	dirPath := "/Users/mashuai/Downloads/bookcha/"
+	dirPath := "/Volumes/data/sbook/"
 
 	dir, err := ioutil.ReadDir(dirPath)
 	if err != nil {

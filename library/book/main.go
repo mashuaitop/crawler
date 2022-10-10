@@ -16,15 +16,17 @@ import (
 func main() {
 	store.InitDB()
 	store.InitRDS()
-	searchBook()
-	//downloadBook()
+
+	//searchBook()
+
+	downloadBook()
 }
 
 func searchBook() {
 	names := methods.WxBookName(store.DB)
 
-	searchChannel := make(chan struct{}, 10)
-	writeCh := make(chan string, 20)
+	searchChannel := make(chan struct{}, 8)
+	writeCh := make(chan string, 12)
 	var wg sync.WaitGroup
 
 	go func() {
@@ -64,14 +66,20 @@ func searchBook() {
 func downloadBook() {
 	userID := "24968293"
 	userKey := "b09825b8a4a84888b43cc0d6b4820306"
-	bookPath := "/Users/mashuai/Downloads/book/"
+	bookPath := "/Volumes/data/cbook/"
 	log := utils.NewLog("error.log")
 
 	//url := "https://zh.u1lib.org/book/13956997/40e05c"
-	dlCh := make(chan struct{}, 10)
+	dlCh := make(chan struct{}, 8)
 	var wg sync.WaitGroup
 
-	for i := 0; i < 300; i++ {
+	for i := 0; i < 200; i++ {
+		length := store.RDS.LLen(context.Background(), "library-search").Val()
+		if length == 0 {
+			fmt.Println("没有数据了")
+			break
+		}
+
 		fmt.Println(i)
 		dlCh <- struct{}{}
 		wg.Add(1)
